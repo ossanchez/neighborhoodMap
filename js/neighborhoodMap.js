@@ -1,44 +1,87 @@
 var map;
 var largeInfoWindow;
-
+var model;
 var locations = [
-  {title: "Location 1", location : {lat: 52.370215, lng: 4.895167}, other:"Other 1", id:0},
-  {title: "Location 2", location : {lat: 52.366366, lng: 4.890910}, other:"Other 2", id:1},
-  {title: "Location 3", location : {lat: 52.390215, lng: 4.875167}, other:"Other 3", id:2},
-  {title: "Location 4", location : {lat: 52.400217, lng: 4.855167}, other:"Other 4", id:3},
-  {title: "Location 5", location : {lat: 52.350257, lng: 4.805167}, other:"Other 5", id:4},
+  {title: "Poort", location : {lat: 52.343088, lng: 5.152480}, id:0},
+  {title: "Muziekwijk", location : {lat: 52.366366, lng: 5.190798}, id:1},
+  {title: "Centrum", location : {lat: 52.375128, lng: 5.219184}, id:2},
+  {title: "Parkwijk", location : {lat: 52.376643, lng: 5.244861}, id:3},
+  {title: "Buiten", location : {lat: 52.3941717, lng: 5.277912}, id:4},
+  {title: "Oostvardes", location : {lat: 52.402831, lng: 5.300028}, id:5},
 ];
+
+function changeSelectedLocation (vm, location){
+  if (location.venueList().length == 0){
+    var position = location.location();
+    var lat = position.lat;
+    var lng = position.lng;
+    var fourSquareUrl = 'https://api.foursquare.com/v2/venues/search?ll='+ lat +','+lng+'&limit=10&client_id=LXHO151SHSKBWMSF0ATQNA0NCK3C31FY3RDJAK2WCA1PFD0Y&client_secret=FYAOVUDOPK1I1HGKBIGOK5LOYS1YN2JGVZYN52MYMEHH35TL&v=20180628';
+    $.getJSON(fourSquareUrl, function(data){
+
+      var venues = data.response.venues;
+      var addedVenues = 0;
+      for(var i = 0; i < venues.length; i++){
+        if (venues[i].name.toLowerCase().indexOf('station') == -1 &&
+            venues[i].name.toLowerCase().indexOf('bus ') == -1 &&
+            venues[i].name.toLowerCase().indexOf('spoor') == -1){
+          location.venueList.push(venues[i])
+          addedVenues +=1;
+          if(addedVenues >= 3){
+            break;
+          }
+        };
+      }
+    }).error(function(e){
+        alert("Location information was not loaded correctly, try again later.");
+    });
+  }
+
+  vm.currentLocation(location);
+  vm.displayLocation(true);
+}
 
 function populateInfoWindow(marker, infoWindow){
   if (infoWindow.marker != marker){
     infoWindow.marker = marker;
-    infoWindow.setContent('<div>' + marker.other + '</div>');
+    infoWindow.setContent('<h3>' + marker.title + '</h3>');
     infoWindow.open(map, marker);
-
-    infoWindow.addListener('closeclick', function(){
-      infoWindow.setMarker = null;
-    });
   }
 }
 
-var Location = function(location){
+function animateMarker(marker, otherLocations){
+
+  for (var i = 0; i < otherLocations.length; i++){
+    otherLocations[i].marker.setAnimation(null);
+  }
+  marker.setAnimation(google.maps.Animation.BOUNCE);
+}
+
+function updateMarker (self){
+  populateInfoWindow(self.marker, largeInfoWindow);
+  changeSelectedLocation(self.model, self);
+  animateMarker(self.marker, self.model.locationList());
+}
+
+var Location = function(vm, location){
   var self = this;
   this.title = ko.observable(location.title);
   this.location = ko.observable(location.location);
   this.other = ko.observable(location.other);
   this.id = ko.observable(location.id);
   this.venueList = ko.observableArray();
+  this.model = vm;
   this.drawMarker = function(bounds){
     self.marker = new google.maps.Marker({
       position : self.location(),
       map      : map,
       title    : self.title(),
       id       : self.id(),
-      other : this.other()
+      other : this.other(),
+      animation: google.maps.Animation.DROP
     });
 
     self.marker.addListener('click', function () {
-      populateInfoWindow(self.marker, largeInfoWindow);
+      updateMarker (self);
     });
 
     bounds.extend(self.location());
@@ -53,7 +96,7 @@ var ViewModel = function () {
   var bounds = new google.maps.LatLngBounds();
 
   locations.forEach(function (location){
-    var newLocation = new Location(location);
+    var newLocation = new Location(self, location);
     self.locationObjects.push(newLocation);
     self.locationList.push(newLocation);
     newLocation.drawMarker(bounds);
@@ -63,29 +106,7 @@ var ViewModel = function () {
   this.currentLocation = ko.observable();
 
   this.setLocation = function(location){
-
-    var list = location.venueList();
-
-    var leng1 = location.venueList().lenght;
-
-    if (location.venueList().length == 0){
-      var position = location.location();
-      var lat = position.lat;
-      var lng = position.lng;
-      var fourSquareUrl = 'https://api.foursquare.com/v2/venues/search?ll='+ lat +','+lng+'&limit=3&client_id=LXHO151SHSKBWMSF0ATQNA0NCK3C31FY3RDJAK2WCA1PFD0Y&client_secret=FYAOVUDOPK1I1HGKBIGOK5LOYS1YN2JGVZYN52MYMEHH35TL&v=20180628';
-      $.getJSON(fourSquareUrl, function(data){
-
-        var venues = data.response.venues;
-        for(var i = 0; i < venues.length; i++){
-          location.venueList.push(venues[i]);
-        }
-      }).error(function(e){
-          alert("Location information was not loaded correctly, try again later.");
-      });
-    }
-
-    self.currentLocation(location);
-    self.displayLocation(true);
+    updateMarker (location);
   };
 
 
@@ -95,7 +116,7 @@ var ViewModel = function () {
       self.locationList([]);
       for (i = 0; i < self.locationObjects.length; i++) {
           title = self.locationObjects[i].title();
-          if (title.indexOf(filter) > -1) {
+          if (title.toUpperCase().indexOf(filter) > -1) {
             self.locationList.push(self.locationObjects[i]);
             self.locationObjects[i].marker.setMap(map);
           }
@@ -115,5 +136,7 @@ function initMap() {
 
   largeInfoWindow = new google.maps.InfoWindow();
 
-  ko.applyBindings(new ViewModel());
+  model = new ViewModel();
+
+  ko.applyBindings(model);
 }
