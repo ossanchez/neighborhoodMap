@@ -6,7 +6,7 @@
 <body>
 
   <div class="sidenav">
-    <input type="text" id="filterInput" onkeyup="filterLocations()" placeholder="Search..">
+    <input type="text" id="filterInput" data-bind="event: { keyup: filterLocations }" placeholder="Search..">
     <ul data-bind='foreach: locationList'>
       <a data-bind='text: title, click: $parent.setLocation'> </a>
     </ul>

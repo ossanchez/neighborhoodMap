@@ -1,6 +1,6 @@
 var map;
 var largeInfoWindow;
-var locationList;
+
 var locations = [
   {title: "Location 1", location : {lat: 52.370215, lng: 4.895167}, other:"Other 1", id:0},
   {title: "Location 2", location : {lat: 52.366366, lng: 4.890910}, other:"Other 2", id:1},
@@ -8,26 +8,6 @@ var locations = [
   {title: "Location 4", location : {lat: 52.400217, lng: 4.855167}, other:"Other 4", id:3},
   {title: "Location 5", location : {lat: 52.350257, lng: 4.805167}, other:"Other 5", id:4},
 ];
-
-var locationObjects = [];
-
-function filterLocations() {
-    var input, filter, ul, li, a, i;
-    input = document.getElementById("filterInput");
-    filter = input.value.toUpperCase();
-    locationList([]);
-    for (i = 0; i < locationObjects.length; i++) {
-        title = locationObjects[i].title();
-        if (title.indexOf(filter) > -1) {
-          locationList.push(locationObjects[i]);
-          locationObjects[i].marker.setMap(map);
-        }
-        else{
-          locationObjects[i].marker.setMap(null);
-        }
-    }
-}
-
 
 function populateInfoWindow(marker, infoWindow){
   if (infoWindow.marker != marker){
@@ -58,7 +38,7 @@ var Location = function(location){
     });
 
     self.marker.addListener('click', function () {
-      populateInfoWindow(marker, largeInfoWindow);
+      populateInfoWindow(self.marker, largeInfoWindow);
     });
 
     bounds.extend(self.location());
@@ -67,14 +47,15 @@ var Location = function(location){
 
 var ViewModel = function () {
   var self = this;
+  this.locationObjects = [];
 
-  locationList = ko.observableArray();
+  this.locationList = ko.observableArray();
   var bounds = new google.maps.LatLngBounds();
 
   locations.forEach(function (location){
     var newLocation = new Location(location);
-    locationObjects.push(newLocation);
-    locationList.push(newLocation);
+    self.locationObjects.push(newLocation);
+    self.locationList.push(newLocation);
     newLocation.drawMarker(bounds);
     map.fitBounds(bounds);
   });
@@ -99,7 +80,7 @@ var ViewModel = function () {
           location.venueList.push(venues[i]);
         }
       }).error(function(e){
-        console.log("An error occured");
+          alert("Location information was not loaded correctly, try again later.");
       });
     }
 
@@ -107,6 +88,22 @@ var ViewModel = function () {
     self.displayLocation(true);
   };
 
+
+  this.filterLocations = function () {
+      input = document.getElementById("filterInput");
+      filter = input.value.toUpperCase();
+      self.locationList([]);
+      for (i = 0; i < self.locationObjects.length; i++) {
+          title = self.locationObjects[i].title();
+          if (title.indexOf(filter) > -1) {
+            self.locationList.push(self.locationObjects[i]);
+            self.locationObjects[i].marker.setMap(map);
+          }
+          else{
+            self.locationObjects[i].marker.setMap(null);
+          }
+      }
+  }
   this.displayLocation = ko.observable(false);
 };
 
