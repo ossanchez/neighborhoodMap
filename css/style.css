@@ -6,7 +6,7 @@ html, body {
 }
 
 #map {
-  height: 80%;
+  height: 70%;
 }
 
 /* Filter input text */
@@ -17,6 +17,22 @@ html, body {
   padding: 12px 12px 12px 12px;
   border: 1px solid #ddd;
   margin-bottom: 12px;
+}
+
+/* Aplication header */
+header {
+  background-color: #111;
+  color: #818181;
+  margin-top: 0px;
+  margin-bottom: 0px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 10px;
+}
+
+headeer h3{
+    margin-top: 0px;
+    margin-bottom: 0px;
 }
 
 /* The sidebar menu */
@@ -41,14 +57,27 @@ html, body {
   display: block;
 }
 
+/* The navigation title */
+.sidenav h3 {
+  text-decoration: none;
+  color: #818181;
+  display: block;
+}
+
 /* When you mouse over the navigation links, change their color */
 .sidenav a:hover {
   color: #f1f1f1;
 }
 
-/* Style page content */
+/* Style page content when sidebar is present */
 .main {
   margin-left: 160px;
+  padding: 0px 0px;
+}
+
+/* Style page content when sidebar is not present */
+.smallmain {
+  margin-left: 0px;
   padding: 0px 0px;
 }
 

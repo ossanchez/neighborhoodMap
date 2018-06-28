@@ -1,37 +1,45 @@
 <html>
 <head>
   <link href="./css/style.css" type="text/css" rel="stylesheet">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 </head>
 <body>
   <!-- Side bar with locations that are filtered -->
-  <div class="sidenav">
-    <input type="text" id="filterInput" data-bind="event: { keyup: filterLocations }" placeholder="Search..">
-    <ul data-bind='foreach: locationList'>
-      <a data-bind='text: title, click: $parent.setLocation'> </a>
-    </ul>
+  <div data-bind="if: showSidebar">
+    <div class="sidenav" >
+      <input type="text" id="filterInput" data-bind="event: { keyup: filterLocations }" placeholder="Search..">
+      <ul data-bind='foreach: locationList'>
+        <a data-bind='text: title, click: $parent.setLocation'> </a>
+      </ul>
+    </div>
   </div>
-
-  <div class="main">
+  <!-- Set the class depending on the sidebar visibility -->
+  <div data-bind="css: sideBarStatus">
+    <header>
+      <h3>Almere Train Stations <span data-bind='click: sizeSidebar' class="glyphicon">&#xe236;</span> </h3>
+    </header>
     <!-- Map -->
     <div id="map"></div>
     <!-- Location specific data -->
     <footer>
       <div data-bind="if: displayLocation">
-        <h2><label>Points of intrest close to:</label>
-          <label data-bind='text: currentLocation().title'></label> </h2>
-          <ul data-bind='foreach: currentLocation().venueList'>
-            <li data-bind='text: name'> </li>
-          </ul>
-          <p>Powered by the Foursquare API</p>
-        </div>
-      </footer>
-    </div>
+        <h2>
+          <label>Points of intrest close to:</label>
+          <label data-bind='text: currentLocation().title'></label>
+        </h2>
+        <ul data-bind='foreach: currentLocation().venueList'>
+          <li data-bind='text: name'> </li>
+        </ul>
+        <p>Powered by the Foursquare API</p>
+      </div>
+    </footer>
+  </div>
 
-    <script src="./js/jquery.min.js"></script>
-    <script src='./node_modules/knockout/build/output/knockout-latest.js'></script>
-    <script src="./js/neighborhoodMap.js"></script>
-    <script async defer
-    src='https://maps.googleapis.com/maps/api/js?key=AIzaSyBGKt75BuL7R1kaO6-BDn3Qd0CmGMCze6M&v=3&callback=initMap'>
-    </script>
-  </body>
-  </html>
+  <script src="./js/jquery.min.js"></script>
+  <script src='./node_modules/knockout/build/output/knockout-latest.js'></script>
+  <script src="./js/neighborhoodMap.js"></script>
+  <script async defer
+  src='https://maps.googleapis.com/maps/api/js?key=AIzaSyBGKt75BuL7R1kaO6-BDn3Qd0CmGMCze6M&v=3&callback=initMap'>
+  </script>
+</body>
+</html>

@@ -21,8 +21,8 @@ function getFourSquareInfo (location){
     var lng = position.lng;
     var fourSquareUrl = 'https://api.foursquare.com/v2/venues/search?ll='+
     lat +','+lng+'&limit=10&client_id=LXHO151SHSKBWMSF0ATQNA0NCK3C31FY3RDJAK'+
-      '2WCA1PFD0Y&client_secret=FYAOVUDOPK1I1HGKBIGOK5LOYS1YN2JGVZYN52MYMEHH'+
-      '35TL&v=20180628';
+    '2WCA1PFD0Y&client_secret=FYAOVUDOPK1I1HGKBIGOK5LOYS1YN2JGVZYN52MYMEHH'+
+    '35TL&v=20180628';
     $.getJSON(fourSquareUrl, function(data){
       var venues = data.response.venues;
       var addedVenues = 0;
@@ -158,6 +158,17 @@ var ViewModel = function () {
 
   // Boolean indicating if a location has been selected
   this.displayLocation = ko.observable(false);
+
+  // Boolean indicating if the sidebar should be visible
+  this.showSidebar = ko.observable(true);
+  this.sizeSidebar = function (){
+    this.showSidebar(!this.showSidebar());
+  }
+
+  // Change the class of the map if the side bar is visible
+  this.sideBarStatus = ko.pureComputed(function() {
+    return self.showSidebar() ? "main" : "smallmain";
+  });
 };
 
 
