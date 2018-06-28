@@ -8,11 +8,25 @@
   <div class="sidenav">
     <input type="text" id="filterInput" onkeyup="filterLocations()" placeholder="Search..">
     <ul data-bind='foreach: locationList'>
-      <a data-bind='text: title, click: '> </a>
+      <a data-bind='text: title, click: $parent.setLocation'> </a>
     </ul>
   </div>
 
-  <div id="map" class="main"></div>
+  <div class="main">
+    <div id="map"></div>
+    <footer>
+        <div data-bind="if: displayLocation">
+          <h2><label>Points of intrest close to:</label>
+          <label data-bind='text: currentLocation().title'></label> </h2>
+          <ul data-bind='foreach: currentLocation().venueList'>
+            <li data-bind='text: name'> </li>
+          </ul>
+          <p>Powered by the Foursquare API</p>
+        </div>
+    </footer>
+  </div>
+
+  <script src="./js/jquery.min.js"></script>
   <script src='./node_modules/knockout/build/output/knockout-latest.js'></script>
   <script src="./js/neighborhoodMap.js"></script>
   <script async defer

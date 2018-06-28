@@ -47,6 +47,7 @@ var Location = function(location){
   this.location = ko.observable(location.location);
   this.other = ko.observable(location.other);
   this.id = ko.observable(location.id);
+  this.venueList = ko.observableArray();
   this.drawMarker = function(bounds){
     self.marker = new google.maps.Marker({
       position : self.location(),
@@ -70,7 +71,6 @@ var ViewModel = function () {
   locationList = ko.observableArray();
   var bounds = new google.maps.LatLngBounds();
 
-
   locations.forEach(function (location){
     var newLocation = new Location(location);
     locationObjects.push(newLocation);
@@ -78,6 +78,36 @@ var ViewModel = function () {
     newLocation.drawMarker(bounds);
     map.fitBounds(bounds);
   });
+
+  this.currentLocation = ko.observable();
+
+  this.setLocation = function(location){
+
+    var list = location.venueList();
+
+    var leng1 = location.venueList().lenght;
+
+    if (location.venueList().length == 0){
+      var position = location.location();
+      var lat = position.lat;
+      var lng = position.lng;
+      var fourSquareUrl = 'https://api.foursquare.com/v2/venues/search?ll='+ lat +','+lng+'&limit=3&client_id=LXHO151SHSKBWMSF0ATQNA0NCK3C31FY3RDJAK2WCA1PFD0Y&client_secret=FYAOVUDOPK1I1HGKBIGOK5LOYS1YN2JGVZYN52MYMEHH35TL&v=20180628';
+      $.getJSON(fourSquareUrl, function(data){
+
+        var venues = data.response.venues;
+        for(var i = 0; i < venues.length; i++){
+          location.venueList.push(venues[i]);
+        }
+      }).error(function(e){
+        console.log("An error occured");
+      });
+    }
+
+    self.currentLocation(location);
+    self.displayLocation(true);
+  };
+
+  this.displayLocation = ko.observable(false);
 };
 
 function initMap() {
