@@ -6,6 +6,7 @@
 <body>
 
   <div class="sidenav">
+    <input type="text" id="filterInput" onkeyup="filterLocations()" placeholder="Search..">
     <ul data-bind='foreach: locationList'>
       <a data-bind='text: title, click: '> </a>
     </ul>

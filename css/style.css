@@ -2,6 +2,15 @@ html, body { height: 100%; margin: 0; padding: 0; font-family: "Lato", sans-seri
 #map { height: 100%; }
 
 
+#filterInput {
+  background-repeat: no-repeat;
+  width: 100%;
+  font-size: 16px;
+  padding: 12px 12px 12px 12px;
+  border: 1px solid #ddd;
+  margin-bottom: 12px;
+}
+
 /* The sidebar menu */
 .sidenav {
   height: 100%; /* Full-height: remove this if you want "auto" height */
@@ -17,7 +26,7 @@ html, body { height: 100%; margin: 0; padding: 0; font-family: "Lato", sans-seri
 
 /* The navigation menu links */
 .sidenav a {
-  padding: 6px 8px 6px 16px;
+  padding: 6px 8px 6px 6px;
   text-decoration: none;
   font-size: 20px;
   color: #818181;
@@ -38,5 +47,5 @@ html, body { height: 100%; margin: 0; padding: 0; font-family: "Lato", sans-seri
 /* On smaller screens, where height is less than 450px, change the style of the sidebar (less padding and a smaller font size) */
 @media screen and (max-height: 450px) {
   .sidenav {padding-top: 15px;}
-  .sidenav a {font-size: 18px;}
+  .sidenav a {font-size: 10px;}
 }

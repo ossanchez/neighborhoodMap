@@ -1,5 +1,6 @@
 var map;
 var largeInfoWindow;
+var locationList;
 var locations = [
   {title: "Location 1", location : {lat: 52.370215, lng: 4.895167}, other:"Other 1", id:0},
   {title: "Location 2", location : {lat: 52.366366, lng: 4.890910}, other:"Other 2", id:1},
@@ -7,6 +8,25 @@ var locations = [
   {title: "Location 4", location : {lat: 52.400217, lng: 4.855167}, other:"Other 4", id:3},
   {title: "Location 5", location : {lat: 52.350257, lng: 4.805167}, other:"Other 5", id:4},
 ];
+
+var locationObjects = [];
+
+function filterLocations() {
+    var input, filter, ul, li, a, i;
+    input = document.getElementById("filterInput");
+    filter = input.value.toUpperCase();
+    locationList([]);
+    for (i = 0; i < locationObjects.length; i++) {
+        title = locationObjects[i].title();
+        if (title.indexOf(filter) > -1) {
+          locationList.push(locationObjects[i]);
+          locationObjects[i].marker.setMap(map);
+        }
+        else{
+          locationObjects[i].marker.setMap(null);
+        }
+    }
+}
 
 
 function populateInfoWindow(marker, infoWindow){
@@ -28,7 +48,7 @@ var Location = function(location){
   this.other = ko.observable(location.other);
   this.id = ko.observable(location.id);
   this.drawMarker = function(bounds){
-    var marker = new google.maps.Marker({
+    self.marker = new google.maps.Marker({
       position : self.location(),
       map      : map,
       title    : self.title(),
@@ -36,7 +56,7 @@ var Location = function(location){
       other : this.other()
     });
 
-    marker.addListener('click', function () {
+    self.marker.addListener('click', function () {
       populateInfoWindow(marker, largeInfoWindow);
     });
 
@@ -47,13 +67,14 @@ var Location = function(location){
 var ViewModel = function () {
   var self = this;
 
-  this.locationList = ko.observableArray();
+  locationList = ko.observableArray();
   var bounds = new google.maps.LatLngBounds();
 
 
   locations.forEach(function (location){
     var newLocation = new Location(location);
-    self.locationList.push(newLocation);
+    locationObjects.push(newLocation);
+    locationList.push(newLocation);
     newLocation.drawMarker(bounds);
     map.fitBounds(bounds);
   });
