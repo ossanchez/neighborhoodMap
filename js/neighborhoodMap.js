@@ -22,8 +22,8 @@ function changeSelectedLocation (vm, location){
       var addedVenues = 0;
       for(var i = 0; i < venues.length; i++){
         if (venues[i].name.toLowerCase().indexOf('station') == -1 &&
-            venues[i].name.toLowerCase().indexOf('bus ') == -1 &&
-            venues[i].name.toLowerCase().indexOf('spoor') == -1){
+        venues[i].name.toLowerCase().indexOf('bus ') == -1 &&
+        venues[i].name.toLowerCase().indexOf('spoor') == -1){
           location.venueList.push(venues[i])
           addedVenues +=1;
           if(addedVenues >= 3){
@@ -32,7 +32,7 @@ function changeSelectedLocation (vm, location){
         };
       }
     }).error(function(e){
-        alert("Location information was not loaded correctly, try again later.");
+      alert("Location information was not loaded correctly, try again later.");
     });
   }
 
@@ -111,19 +111,19 @@ var ViewModel = function () {
 
 
   this.filterLocations = function () {
-      input = document.getElementById("filterInput");
-      filter = input.value.toUpperCase();
-      self.locationList([]);
-      for (i = 0; i < self.locationObjects.length; i++) {
-          title = self.locationObjects[i].title();
-          if (title.toUpperCase().indexOf(filter) > -1) {
-            self.locationList.push(self.locationObjects[i]);
-            self.locationObjects[i].marker.setMap(map);
-          }
-          else{
-            self.locationObjects[i].marker.setMap(null);
-          }
+    input = document.getElementById("filterInput");
+    filter = input.value.toUpperCase();
+    self.locationList([]);
+    for (i = 0; i < self.locationObjects.length; i++) {
+      title = self.locationObjects[i].title();
+      if (title.toUpperCase().indexOf(filter) > -1) {
+        self.locationList.push(self.locationObjects[i]);
+        self.locationObjects[i].marker.setMap(map);
       }
+      else{
+        self.locationObjects[i].marker.setMap(null);
+      }
+    }
   }
   this.displayLocation = ko.observable(false);
 };
