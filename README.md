@@ -31,4 +31,5 @@ API.
  * www.w3schools.com
 
 ## Other notes
+
 This application was tested in a Chrome browser.
